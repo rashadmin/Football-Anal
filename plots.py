@@ -1,10 +1,6 @@
 import plotly.express as px
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
 import streamlit as st
-import numpy as np
-from wrangler import wrangle_club_data
+
 @st.cache(suppress_st_warning=True)
 def points_bar_plot(data,league,season,rank='top'):
     if rank == 'top':

@@ -4,12 +4,11 @@ from streamlit_function import league_dataframe,club_matches,club_stats,away_hom
 import pandas as pd
 from wrangler import season_unique_club
 from plots import points_bar_plot,goal_diff_bar_plot,club_points_bar_plot,club_goal_bar_plot,home_away_plot
-import streamlit.components.v1 as components
 st.set_page_config(layout='wide')
 st.title('FOOTBALL ANALYSIS FOR THE TOP 5 LEAGUE IN EUROPE')
 
 league_name =  st.sidebar.radio('SELECT LEAGUE', options = ['England','Spain'])
-filename = league_name+'.csv'
+filename = 'data/'+league_name+'.csv'
 df = pd.read_csv(filename)
 analysis = st.sidebar.radio('SELECT ANALYSIS', options = ['League Analysis','Club Analysis'])
 
