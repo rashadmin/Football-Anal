@@ -42,8 +42,10 @@ def get_goal_diff(filename,club,season=None,all_seasons=False):
 # Gets Club for all seasons or a given season
 def season_unique_club(filename,season=None,all_seasons=False):
     df = pd.read_csv(filename).drop('Unnamed: 0',axis=1)
+    df.sort_values('home_team',inplace=True)
     if (season=='All Seasons')|all_seasons:
         unique_team = df.home_team.unique()
         return unique_team
     unique_team = df[df['season']==season].home_team.unique()
+    unique_team.sort()
     return unique_team
