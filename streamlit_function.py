@@ -27,9 +27,9 @@ def club_matches(filename,club,all_seasons=True,season=None):
     
     if season != 'All Seasons':
         df = df[df['season']==season]
-        col = ['home_team','score','away_team','points','Goal Difference']
+        col = ['home_team','score','away_team']
     else:
-        col = ['home_team','score','away_team','points','Goal Difference','season']
+        col = ['home_team','score','away_team','season']
     df = df.sort_values('date').reset_index(drop=True)
     df = df[col]
     return df
@@ -42,11 +42,11 @@ def club_stats(filename,club,all_seasons=True):
      for season in unique_season:
          seasonal_club_data = league_dataframe(filename,all_seasons=False,season=season)
          index = seasonal_club_data.index[seasonal_club_data['clubs']==club]
-         position.append(index.values+1)
+         position.append(index.values[0]+1)
          goal_diff = seasonal_club_data.loc[index,'goal_difference']
-         goal_difference.append(goal_diff.values)
+         goal_difference.append(goal_diff.values[0])
          point = seasonal_club_data.loc[index,'point']
-         points.append(point.values)
+         points.append(point.values[0])
      stats = pd.DataFrame(
          {
              'season':unique_season,
@@ -57,3 +57,17 @@ def club_stats(filename,club,all_seasons=True):
          )
      
      return stats
+ 
+def away_home(filename,club,season=None):
+    data =wrangle_club_data(filename, club)
+    mapping = {0:'Loss',1:'Draw',3:'Win'}
+    data['points'].replace(mapping,inplace=True)
+    if season != 'All Seasons':
+        home_games = data[(data['home_team']==club)&(data['season']==season)]
+        away_games = data[(data['home_team']!=club)&(data['season']==season)]
+    else:
+        home_games = data[(data['home_team']==club)]
+        away_games = data[(data['home_team']!=club)]
+    home_games=home_games['points'].value_counts()
+    away_games = away_games['points'].value_counts()
+    return home_games,away_games
