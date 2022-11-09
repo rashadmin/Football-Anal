@@ -2,7 +2,7 @@ import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
 
-
+season_list = ['17/18','18/19','19/20','20/21','21/22','All Seasons']
 
 def wrangle_club_data(filename,club):
     df = pd.read_csv(filename).drop('Unnamed: 0',axis=1)
@@ -22,23 +22,54 @@ def wrangle_club_data(filename,club):
     df.sort_values('date',inplace=True)
     return df
 # Gets Points for the specified club for all seasons or a given season
-def get_points(filename,club,season=None,all_seasons=False):
+def get_points(filename,club,season=None,all_seasons=False,all_point=True,i=1):
     df = wrangle_club_data(filename,club)
-    if all_seasons:
+    
+    df.index = df.index+1
+    if all_point:
+        if all_seasons:
+            points = df['points'].sum()
+            return points
+        df = df[df['season']==season]
         points = df['points'].sum()
         return points
-    df = df[df['season']==season]
-    points = df['points'].sum()
-    return points
+    else:
+        if all_seasons:
+            index = season_list.index(season)
+            selected_season = season_list[:index+1]
+            df = df[df['season'].isin(selected_season)]
+            points = df['points'].sum()
+            return points
+        df = df[df['season']==season]
+        df.reset_index(inplace=True,drop=True)
+        df.index = df.index+1
+        points = df.loc[:i,'points'].sum()
+        return points
 # Gets Goal Difference for the specified club for all seasons or a given season
-def get_goal_diff(filename,club,season=None,all_seasons=False):
+def get_goal_diff(filename,club,season=None,all_seasons=False,all_point=True,i=1):
     df = wrangle_club_data(filename,club)
-    if all_seasons:
+    df.index = df.index+1
+    if all_point:
+        if all_seasons:
+            goal_diff = df['Goal Difference'].sum()
+            return goal_diff
+        df = df[df['season']==season]
         goal_diff = df['Goal Difference'].sum()
         return goal_diff
-    df = df[df['season']==season]
-    goal_diff = df['Goal Difference'].sum()
-    return goal_diff
+    else:
+        if all_seasons:
+            index = season_list.index(season)
+            if season != 'All Seasons':
+                index = season_list.index(season)+1
+            selected_season = season_list[:index]
+            df = df[df['season'].isin(selected_season)]
+            goal_diff = df['Goal Difference'].sum()
+            return goal_diff
+        df = df[df['season']==season]
+        df.reset_index(inplace=True,drop=True)
+        df.index = df.index+1
+        goal_diff = df.loc[:i,'Goal Difference'].sum()
+        return goal_diff
 # Gets Club for all seasons or a given season
 def season_unique_club(filename,season=None,all_seasons=False):
     df = pd.read_csv(filename).drop('Unnamed: 0',axis=1)

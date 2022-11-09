@@ -1,6 +1,5 @@
 import plotly.express as px
 import streamlit as st
-
 @st.cache(suppress_st_warning=True)
 def points_bar_plot(data,league,season,rank='top'):
     if rank == 'top':
@@ -40,7 +39,15 @@ def club_goal_bar_plot(data,league,club):
     figs = px.bar(data_frame= data,y='goal_difference',x='season',orientation='v',title=title,width=1000)
     #figs.update_layout(yaxis=dict(tickvals=np.arange(144)))
     return figs
-
+@st.cache(suppress_st_warning=True)
 def home_away_plot(data):
     fig = px.pie(data,names=data.index,values='points',width=600)
+    return fig
+@st.cache(suppress_st_warning=True)
+def diff_plot(data,league,season,rank='top'):
+    if rank =='top':
+        title = f'A Line Plot showing the difference in point between the Top 4 team in the {league} League in {season}'
+    else:
+        title = f'A Line Plot showing the difference in point between the Relegation Threatened Bottom 4 team in the {league} League in {season}'
+    fig = px.line(data_frame=data,x='Match_Day',y=data.columns[1:],title=title)
     return fig
